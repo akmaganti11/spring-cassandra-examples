@@ -1,10 +1,7 @@
 package spring.cassandra.example.resource;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,11 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 
 import spring.cassandra.example.entity.Books;
 import spring.cassandra.example.repository.BooksRepository;
+import spring.cassandra.example.util.BooksUtil;
 
 @RestController
 public class BooksController {
@@ -41,18 +38,8 @@ public class BooksController {
 
 	@PostMapping("/books")
 	public void addBooks() throws IOException, URISyntaxException, CsvException {
-		Reader reader = Files.newBufferedReader(Paths.get(ClassLoader.getSystemResource("books.csv").toURI()));
-		CSVReader csvReader = new CSVReader(reader);
-		String[] line;
-		try {
-			while ((line = csvReader.readNext()) != null) {
-				booksRepo.save(new Books(line[0], line[1], line[2], line[3], line[4]));
-			}
-		} finally {
-			reader.close();
-			csvReader.close();
-		}
-
+		List<String[]> records = BooksUtil.readCSVRecords();
+		records.stream().forEach(r -> booksRepo.save(new Books(r[0], r[1], r[2], r[3], r[4])));
 	}
 
 	@DeleteMapping("/books")

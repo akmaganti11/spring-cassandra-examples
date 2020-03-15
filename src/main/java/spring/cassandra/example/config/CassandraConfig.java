@@ -10,9 +10,10 @@ import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
 import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.core.cql.keyspace.CreateKeyspaceSpecification;
-import org.springframework.data.cassandra.core.mapping.BasicCassandraMappingContext;
-import org.springframework.data.cassandra.core.mapping.CassandraMappingContext;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
+
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
 
 import spring.cassandra.example.entity.Book;
 
@@ -36,6 +37,13 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
 		cluster.setPassword(PASSWORD);
 		cluster.setKeyspaceCreations(getKeyspaceCreations());
 		return cluster;
+	}
+	
+	@Bean
+	public Session clusterSession() {
+		Cluster cluster = Cluster.builder().addContactPoints(CONTACT_POINTS).build();
+		Session session = cluster.connect(KEYSPACE);
+		return session;
 	}
 
 	@Override
