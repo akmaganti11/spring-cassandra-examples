@@ -45,7 +45,7 @@ public class BooksByCompositeKeyController {
 	@PostMapping("/booksByCompositeKey")
 	public void createBookByCompositeKey() {
 		booksByCompositeKeyRepo.save(new BooksByCompositeKey(new BooksCompositeKey(UUID.randomUUID(), "AK", "Fiction"),
-				"Title", "123", "Pub123"));
+				"Title", "123", "Pub123456"));
 	}
 
 //	@PostMapping("/booksByCompositeKey")
